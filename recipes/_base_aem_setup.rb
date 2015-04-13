@@ -22,15 +22,8 @@ case node["platform_family"]
 when "debian"
   # do things on debian-ish platforms (debian, ubuntu, linuxmint)
 
-  package 'libcurl4-openssl-dev' do
-    action :nothing
-  end.run_action(:install)
-
-  package 'maven' do
-    action :nothing
-  end.run_action(:install)
-
-  package 'ruby' do
+  %w{libcurl4-openssl-dev maven ruby}.each do |pkg|
+  package pkg do
     action :nothing
   end.run_action(:install)
 
@@ -46,13 +39,10 @@ gem_package "bundler" do
   ignore_failure true
 end
 
-package 'git' do
-  action :nothing
-end.run_action(:install)
-
-package 'gcc' do
-  action :nothing
-end.run_action(:install)
+%w{git gcc}.each do |pkg2|
+  package pkg2 do
+    action :nothing
+  end.run_action(:install)
 
 chef_gem 'curb' do
   action :nothing
