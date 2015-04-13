@@ -75,7 +75,7 @@ action :install do
       end
     end
 
-    link "#{node[:apache][:libexecdir]}/mod_dispatcher.so" do # ~FC001
+    link "#{node[:apache][:libexecdir]}/mod_dispatcher.so" do 
       to local_file_path
       notifies :restart, service_name
     end

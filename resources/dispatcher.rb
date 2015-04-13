@@ -18,6 +18,8 @@
 
 actions :install
 
+default_action :isntall
+
 attribute :dispatcher_mod_name, :kind_of => String, :name_attribute => true
 attribute :package_install, :kind_of => [ TrueClass, FalseClass ], :default => false
 attribute :dispatcher_uri, :kind_of => String, :default => nil

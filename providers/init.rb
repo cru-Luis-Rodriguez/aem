@@ -27,7 +27,7 @@ action :add do
 
   #take value passed to provider, or node attribute
   var_list.each do |var|
-    vars[var] = new_resource.send(var) || node[:aem][var] # ~FC001
+    vars[var] = new_resource.send(var) || node[:aem][var] 
   end
   template "/etc/init.d/#{service_name}" do
     cookbook 'aem'

@@ -35,7 +35,7 @@ action :add do
   var_list.keys.each do |var|
     type = var_list[var]
     nothing = empty[type]
-    vars[var] = new_resource.send(var) || node[:aem][:dispatcher][var] || nothing # ~FC001
+    vars[var] = new_resource.send(var) || node[:aem][:dispatcher][var] || nothing 
   end
 
   raise "farm_dir attribute is required to create a farm." unless vars[:farm_dir]
@@ -76,7 +76,7 @@ action :add do
   template "#{vars[:farm_dir]}/farm_#{farm_name}.any" do
     cookbook 'aem'
     source 'farm.any.erb'
-    group node[:apache][:root_group] # ~FC001
+    group node[:apache][:root_group] 
     mode '0664'
     variables(vars)
     notifies :restart, resources(:service => "apache2")
@@ -84,8 +84,8 @@ action :add do
 end
 
 action :remove do
-  farm_name = new_resource.farm_name || node[:aem][:dispatcher][:farm_name] # ~FC001
-  farm_dir = new_resource.farm_dir || node[:aem][:dispatcher][:farm_dir] # ~FC001
+  farm_name = new_resource.farm_name || node[:aem][:dispatcher][:farm_name] 
+  farm_dir = new_resource.farm_dir || node[:aem][:dispatcher][:farm_dir] 
   file "#{farm_dir}/farm_#{farm_name}.any" do
     action :delete
     notifies :restart, resources(:service => "apache2")

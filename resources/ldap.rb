@@ -20,5 +20,7 @@
 
 actions :enable, :disable
 
+default_action :nothing
+
 attribute :instance_name, :kind_of => String, :name_attribute => true
 attribute :options, :kind_of => Hash, :default => nil

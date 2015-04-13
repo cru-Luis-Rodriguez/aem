@@ -20,6 +20,7 @@
 # that will be served by dispatcher
 
 actions :add, :remove
+default_action :nothing
 
 attribute :site_name, :kind_of => String, :name_attribute => true
 attribute :server_name, :kind_of => String, :default => nil

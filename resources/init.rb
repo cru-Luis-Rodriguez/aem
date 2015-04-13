@@ -20,6 +20,8 @@
 
 actions :add
 
+default_action :nothing
+
 attribute :service_name, :kind_of => String, :name_attribute => true, :required => true
 attribute :aem_options, :kind_of => Hash, :default => nil
 attribute :default_context, :kind_of => String, :default => nil

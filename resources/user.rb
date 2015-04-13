@@ -19,6 +19,7 @@
 # This resource sets a users password for AEM
 
 actions :add, :remove, :set_password
+default_action :nothing
 
 attribute :user, :kind_of => String, :name_attribute => true
 attribute :password, :kind_of => String, :default => nil

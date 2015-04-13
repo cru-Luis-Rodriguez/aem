@@ -19,6 +19,7 @@
 # This resource manages AEM packages
 
 actions :upload, :install, :activate, :uninstall, :delete
+default_action :nothing
 
 attribute :name, :kind_of => String, :name_attribute => true, :required => true
 attribute :aem_instance, :kind_of => String, :required => true

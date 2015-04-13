@@ -17,6 +17,7 @@
 # limitations under the License.
 
 actions :add, :remove
+default_action :nothing
 
 attribute :name, :kind_of => String, :name_attribute => true
 attribute :local_user, :kind_of => String, :required => true

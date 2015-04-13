@@ -18,6 +18,8 @@
 
 actions :add, :remove
 
+default_action :nothing
+
 attribute :farm_name, :kind_of => String, :name_attribute => true
 attribute :client_headers, :kind_of => Array, :default => nil
 attribute :virtual_hosts, :kind_of => Array, :default => nil

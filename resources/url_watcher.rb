@@ -17,6 +17,7 @@
 # limitations under the License.
 
 actions :wait
+default_action :nothing
 
 attribute :name, :kind_of => String, :name_attribute => true
 attribute :validation_url, :kind_of => String, :default => nil, :required => true

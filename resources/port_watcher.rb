@@ -17,6 +17,7 @@
 # limitations under the License.
 
 actions :wait
+default_action :nothing
 
 attribute :port, :kind_of => String, :name_attribute => true
 attribute :protocol, :kind_of => String, :default => "tcp"
