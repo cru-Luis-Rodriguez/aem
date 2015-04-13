@@ -85,7 +85,7 @@ action :add do
     group node[:apache][:root_group] 
     mode '0664'
     variables(vars)
-    notifies :restart, resources(:service => "apache2")
+    notifies :restart, "service[apache2]"
   end
 end
 
@@ -94,6 +94,6 @@ action :remove do
   farm_dir = new_resource.farm_dir || node[:aem][:dispatcher][:farm_dir] 
   file "#{farm_dir}/farm_#{farm_name}.any" do
     action :delete
-    notifies :restart, resources(:service => "apache2")
+    notifies :restart, "service[apache2]"
   end
 end
