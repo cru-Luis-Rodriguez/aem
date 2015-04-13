@@ -205,14 +205,14 @@ default[:aem][:dispatcher][:ssl_enabled] = false
 default[:aem][:dispatcher][:ssl_cert_file] = "/etc/httpd/ssl/server.crt"
 default[:aem][:dispatcher][:ssl_key_file] = "/etc/httpd/ssl/server.key"
 default[:aem][:dispatcher][:expire_dirs] = []
-default[:aem][:dispatcher][:enable_etag] = false
-default[:aem][:dispatcher][:enable_ie_header] = true
+default[:aem][:dispatcher][:enable_etag] = false # ~FC001
+default[:aem][:dispatcher][:enable_ie_header] = true # ~FC001
 default[:aem][:dispatcher][:session_mgmt] = {
     "directory" => "#{node[:apache][:dir]}/dispatcher/sessions",
     "header" => "Cookie:login-token"
-  }
-default[:aem][:dispatcher][:enable_session_mgmt] = false
-default[:aem][:dispatcher][:mod_dispatcher_url] = nil
-default[:aem][:dispatcher][:mod_dispatcher_checksum] = nil
-default[:aem][:dispatcher][:deflate_enabled] = true
-default[:aem][:dispatcher][:header] = []
+  } # ~FC001
+default[:aem][:dispatcher][:enable_session_mgmt] = false # ~FC001
+default[:aem][:dispatcher][:mod_dispatcher_url] = nil # ~FC001
+default[:aem][:dispatcher][:mod_dispatcher_checksum] = nil # ~FC001
+default[:aem][:dispatcher][:deflate_enabled] = true # ~FC001
+default[:aem][:dispatcher][:header] = [] # ~FC001
