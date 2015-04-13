@@ -54,16 +54,22 @@ action :add do
   if new_resource.dynamic_cluster
     log "Finding replication hosts dynamically..."
     hosts = []
-    search(:node, %Q(role:"#{role}" AND aem_cluster_name:"#{cluster_name}")) do |n|
-      log "Found host: #{n[:fqdn]}"
-      hosts << {
-        :ipaddress => n[:ipaddress],
-        :port => n[:aem][aem_instance][:port],
-        :user => n[:aem][aem_instance][:admin_user],
-        :password => n[:aem][aem_instance][:admin_password],
-        :name => n[:fqdn]
-      }
+    #fix issue FC003
+    if Chef::Config[:solo]
+       Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+    else
+      search(:node, %Q(role:"#{role}" AND aem_cluster_name:"#{cluster_name}")) do |n|
+        log "Found host: #{n[:fqdn]}"
+        hosts << {
+          :ipaddress => n[:ipaddress],
+          :port => n[:aem][aem_instance][:port],
+          :user => n[:aem][aem_instance][:admin_user],
+          :password => n[:aem][aem_instance][:admin_password],
+          :name => n[:fqdn]
+        }
+      end
     end
+    #end FC003
     hosts.sort! { |a,b| a[:name] <=> b[:name] }
   end
 
