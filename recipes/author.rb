@@ -16,8 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include_recipe 'aws'
 include_recipe "aem::_base_aem_setup"
 
+#source url can be file:///tmp/cq60-author-p4502.jar need to setup an if statement to download the file from S3
 unless node[:aem][:use_yum]
   aem_jar_installer "author" do
     download_url node[:aem][:download_url]
@@ -27,12 +29,22 @@ unless node[:aem][:use_yum]
   end
 end
 
-unless node[:aem][:license_url].nil?
-  remote_file "#{node[:aem][:author][:default_context]}/license.properties" do
-    source "#{node[:aem][:license_url]}"
-    mode 0644
-  end
+if node['aem']['license_url'] == "S3"
+    aws_s3_file "#{node[:aem][:author][:default_context]}/license.properties" do
+      bucket "cru-aem6"
+      remote_path "/installation_files/license.properties"
+      aws_access_key_id node[:custom_access_key]
+      aws_secret_access_key node[:custom_secret_key]
+    end
+  else
+    unless node[:aem][:license_url].nil?
+      remote_file "#{node[:aem][:author][:default_context]}/license.properties" do
+        source "#{node[:aem][:license_url]}"
+        mode 0644
+      end
+    end
 end
+
 
 if node[:aem][:version].to_f > 5.4 then
   node.set[:aem][:author][:runnable_jar] = "aem-author-p#{node[:aem][:author][:port]}.jar"
