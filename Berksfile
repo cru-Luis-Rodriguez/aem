@@ -2,4 +2,6 @@ source 'https://supermarket.getchef.com'
 
 metadata
 
-cookbook "aws", ">= 2.2.2"
+#lock version of aws_sdk to fix issue with: Name error -- uninitialize
+
+cookbook "aws", ">= 2.5.0"

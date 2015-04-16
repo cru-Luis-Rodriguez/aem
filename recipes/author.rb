@@ -17,9 +17,19 @@
 # limitations under the License.
 
 include_recipe 'aws'
+aws = data_bag_item("aws", "main")
 include_recipe "aem::_base_aem_setup"
 
 #source url can be file:///tmp/cq60-author-p4502.jar need to setup an if statement to download the file from S3
+aws_s3_file "/tmp/cq60-author-p4502.jar" do
+      bucket "cru-aem6"
+      remote_path "/installation_files/cq60-author-p4502.jar"
+      aws_access_key_id node[:aws_access_key_id]
+      aws_secret_access_key node[:aws_secret_access_key]
+      mode 0644
+      not_if { ::File.exist?("/tmp/cq60-author-p4502.jar") }
+    end
+
 unless node[:aem][:use_yum]
   aem_jar_installer "author" do
     download_url node[:aem][:download_url]
@@ -33,8 +43,9 @@ if node['aem']['license_url'] == "S3"
     aws_s3_file "#{node[:aem][:author][:default_context]}/license.properties" do
       bucket "cru-aem6"
       remote_path "/installation_files/license.properties"
-      aws_access_key_id node[:custom_access_key]
-      aws_secret_access_key node[:custom_secret_key]
+      aws_access_key_id node[:aws_access_key_id]
+      aws_secret_access_key node[:aws_secret_access_key]
+      mode 0644
     end
   else
     unless node[:aem][:license_url].nil?
