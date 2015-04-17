@@ -38,8 +38,9 @@ end
 
 %w{git gcc}.each do |pkg2|
   package pkg2 do
-    action :nothing
-  end.run_action(:install)
+    action :install
+  end
+end
 
 chef_gem 'curb' do
   action :nothing
