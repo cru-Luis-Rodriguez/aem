@@ -18,24 +18,20 @@
 
 # We need these for the jcr_node provider
 
-case node["platform_family"]
-when "debian"
-  # do things on debian-ish platforms (debian, ubuntu, linuxmint)
-
+case node['platform_family']
+when 'debian'
   %w{libcurl4-openssl-dev maven ruby}.each do |pkg|
   package pkg do
-    action :nothing
-  end.run_action(:install)
-
+    action :install
+  end 
 when "rhel"
-  # do things on RHEL platforms (redhat, centos, scientific, etc)
   package 'libcurl-devel' do
-    action :nothing
-  end.run_action(:install)
+    action :install
+  end
 end
 
 gem_package "bundler" do
-  action : install
+  action :install
   ignore_failure true
 end
 
