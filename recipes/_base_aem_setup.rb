@@ -18,14 +18,14 @@
 
 # We need these for the jcr_node provider
 
-case node['platform_family']
-when 'debian'
-  %w{libcurl4-openssl-dev maven ruby}.each do |pkg|
+case node['platform']
+when 'ubuntu'
+  %w{libcurl4-openssl-dev libcurl4-gnutls-dev maven ruby}.each do |pkg|
     package pkg do
       action :install
     end
   end
-when "rhel"
+when 'centos'
   package 'libcurl-devel' do
     action :install
   end

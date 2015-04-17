@@ -26,7 +26,7 @@ aws_s3_file "/tmp/cq60-author-p4502.jar" do
       remote_path "/installation_files/cq60-author-p4502.jar"
       aws_access_key_id node[:aws_access_key_id]
       aws_secret_access_key node[:aws_secret_access_key]
-      mode 0644
+      mode "0644"
       not_if { ::File.exist?("/tmp/cq60-author-p4502.jar") }
     end
 
