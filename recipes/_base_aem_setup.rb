@@ -18,14 +18,14 @@
 
 # We need these for the jcr_node provider
 
-case node['platform']
-when 'ubuntu'
+case node[:platform]
+when 'ubuntu','debian'
   %w{libcurl4-openssl-dev libcurl4-gnutls-dev maven ruby}.each do |pkg|
     package pkg do
       action :install
     end
   end
-when 'centos'
+when 'centos','redhat','fedora','amazon'
   package 'libcurl-devel' do
     action :install
   end
@@ -43,8 +43,8 @@ end
 end
 
 chef_gem 'curb' do
-  action :nothing
-end.run_action(:install)
+  action :install
+end
 
 require 'curb'
 
