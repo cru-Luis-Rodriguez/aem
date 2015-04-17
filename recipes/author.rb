@@ -24,8 +24,8 @@ include_recipe "aem::_base_aem_setup"
 aws_s3_file "/tmp/cq60-author-p4502.jar" do
       bucket "cru-aem6"
       remote_path "/installation_files/cq60-author-p4502.jar"
-      aws_access_key_id node['aws_access_key_id']
-      aws_secret_access_key node['aws_secret_access_key']
+      aws_access_key_id node aws['aws_access_key_id']
+      aws_secret_access_key node aws['aws_secret_access_key']
       mode "0644"
       not_if { ::File.exist?("/tmp/cq60-author-p4502.jar") }
     end
@@ -43,8 +43,8 @@ if node['aem']['license_url'] == "S3"
     aws_s3_file "#{node[:aem][:author][:default_context]}/license.properties" do
       bucket "cru-aem6"
       remote_path "/installation_files/license.properties"
-      aws_access_key_id node['aws_access_key_id']
-      aws_secret_access_key node['aws_secret_access_key']
+      aws_access_key_id node aws['aws_access_key_id']
+      aws_secret_access_key node aws['aws_secret_access_key']
       mode "0644"
     end
   else
