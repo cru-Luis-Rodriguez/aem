@@ -45,13 +45,13 @@ if node['aem']['license_url'] == "S3"
       remote_path "/installation_files/license.properties"
       aws_access_key_id node[:aws_access_key_id]
       aws_secret_access_key node[:aws_secret_access_key]
-      mode 0644
+      mode "0644"
     end
   else
     unless node[:aem][:license_url].nil?
       remote_file "#{node[:aem][:author][:default_context]}/license.properties" do
         source "#{node[:aem][:license_url]}"
-        mode 0644
+        mode "0644"
       end
     end
 end
