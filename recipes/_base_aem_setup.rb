@@ -21,9 +21,10 @@
 case node['platform_family']
 when 'debian'
   %w{libcurl4-openssl-dev maven ruby}.each do |pkg|
-  package pkg do
-    action :install
-  end 
+    package pkg do
+      action :install
+    end
+  end
 when "rhel"
   package 'libcurl-devel' do
     action :install
