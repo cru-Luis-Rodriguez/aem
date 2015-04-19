@@ -18,19 +18,6 @@
 
 # We need these for the jcr_node provider
 
-case node[:platform]
-when 'ubuntu','debian'
-  %w{libcurl4-openssl-dev libcurl4-gnutls-dev maven ruby}.each do |pkg|
-    package pkg do
-      action :install
-    end
-  end
-when 'centos','redhat','fedora','amazon'
-  package 'libcurl-devel' do
-    action :install
-  end
-end
-
 gem_package "bundler" do
   action :install
   ignore_failure true
