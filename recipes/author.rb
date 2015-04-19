@@ -16,7 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe 'aws'
+include_recipe "curl::default"
+include_recipe "curl::libcurl"
+include_recipe "aws"
 aws = data_bag_item("aws", "main")
 include_recipe "aem::_base_aem_setup"
 
