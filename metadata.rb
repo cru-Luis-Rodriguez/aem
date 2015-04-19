@@ -11,10 +11,11 @@ recipe 'aem::author', 'Installs AEM Author instance.'
 recipe 'aem::publish', 'Installs AEM Publish instance.'
 recipe 'aem::dispatcher', 'Installs AEM dispatcher Apache module.'
 
-supports 'centos'
+supports 'centos' 'ubuntu'
 
 depends 'apache2'
 depends 'ark', '~> 0.8.2'
 depends 'iptables'
 depends 'java'
 depends "aws"
+depends "curl"
