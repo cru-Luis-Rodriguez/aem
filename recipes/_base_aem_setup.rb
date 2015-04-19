@@ -17,12 +17,21 @@
 # limitations under the License.
 
 # We need these for the jcr_node provider
- %w{libcurl4-openssl-dev libcurl4-gnutls-dev maven ruby}.each do |pkg|
-    package pkg do
-      action :install
-    end
-  end  
-  
+package 'libcurl4-openssl-dev' do
+  action :install
+end
+package 'libcurl4-gnutls-dev' do
+  action :install
+end
+
+package 'maven' do
+  action :install
+end
+
+package 'ruby' do
+  action :install
+end
+
 gem_package "bundler" do
   action :install
   ignore_failure true
