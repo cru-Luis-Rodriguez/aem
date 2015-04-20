@@ -17,14 +17,19 @@
 # limitations under the License.
 
 # We need these for the jcr_node provider
-package ['libcurl4-gnutls-dev', 'libcurl4-openssl-dev', 'mave', 'ruby', 'git', 'gcc', 'curb']
+package ['libcurl4-gnutls-dev', 'libcurl4-openssl-dev', 'mave', 'ruby', 'git', 'gcc']
 
 gem_package "bundler" do
   action :install
   ignore_failure true
 end
 
-require 'curb'
+gem_package "curb" do
+  action :install
+  ignore_failure true
+end  
+
+#require 'curb'
 
 unless node['aem']['license_url']
   Chef::Application.fatal! 'aem.license_url attribute cannot be nil. Please populate that attribute.'
