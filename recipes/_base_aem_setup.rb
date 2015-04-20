@@ -17,6 +17,13 @@
 # limitations under the License.
 
 # We need these for the jcr_node provider
+execute 'apt-get-update' do
+  command 'apt-get update'
+  ignore_failure true
+  only_if { apt_installed? }
+  not_if { ::File.exist?('/var/lib/apt/periodic/update-success-stamp') }
+end
+
 package "libcurl4-gnutls-dev" do
   action :upgrade
 end
@@ -41,12 +48,13 @@ gem_package "bundler" do
   ignore_failure true
 end
 
-gem_package "curb" do
-  action :install
+execute 'install_curb' do
+  command 'sudo gem install curb'
   ignore_failure true
+  not_if {gem list -d curb | grep -q 'curb'}
 end  
 
-#require 'curb'
+require 'curb'
 
 unless node['aem']['license_url']
   Chef::Application.fatal! 'aem.license_url attribute cannot be nil. Please populate that attribute.'

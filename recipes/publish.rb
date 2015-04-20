@@ -40,7 +40,7 @@ unless node[:aem][:use_yum]
 end
 
 if node['aem']['license_url'] == "S3"
-    aws_s3_file "#{node[:aem][:author][:default_context]}/license.properties" do
+    aws_s3_file "#{node[:aem][:publish][:default_context]}/license.properties" do
       bucket "cru-aem6"
       remote_path "/installation_files/license.properties"
       aws_access_key_id aws['aws_access_key_id']
