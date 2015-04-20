@@ -17,30 +17,11 @@
 # limitations under the License.
 
 # We need these for the jcr_node provider
-package 'libcurl4-openssl-dev' do
-  action :install
-end
-package 'libcurl4-gnutls-dev' do
-  action :install
-end
-
-package 'maven' do
-  action :install
-end
-
-package 'ruby' do
-  action :install
-end
+package ['libcurl4-gnutls-dev', 'libcurl4-openssl-dev', 'mave', 'ruby', 'git', 'gcc']
 
 gem_package "bundler" do
   action :install
   ignore_failure true
-end
-
-%w{git gcc}.each do |pkg2|
-  package pkg2 do
-    action :install
-  end
 end
 
 chef_gem 'curb' do
