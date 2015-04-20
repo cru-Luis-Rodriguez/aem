@@ -51,7 +51,7 @@ end
 execute 'install_curb' do
   command 'sudo gem install curb'
   ignore_failure true
-  not_if {gem list -d curb | grep -q 'curb'}
+  not_if ' /usr/bin/gem list -d curb | grep -q curb '
 end  
 
 require 'curb'
