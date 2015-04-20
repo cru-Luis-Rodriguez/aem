@@ -23,7 +23,7 @@ end
 package "libcurl4-openssl-dev" do
   action :upgrade
 end
-package "mave" do
+package "maven" do
   action :upgrade
 end
 package "ruby" do
