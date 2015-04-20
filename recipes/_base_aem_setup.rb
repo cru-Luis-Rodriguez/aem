@@ -17,7 +17,12 @@
 # limitations under the License.
 
 # We need these for the jcr_node provider
-package ['libcurl4-gnutls-dev', 'libcurl4-openssl-dev', 'mave', 'ruby', 'git', 'gcc']
+package ['libcurl4-gnutls-dev']
+package ['libcurl4-openssl-dev']
+package ['mave']
+package ['ruby']
+package ['git']
+package ['gcc']
 
 gem_package "bundler" do
   action :install
