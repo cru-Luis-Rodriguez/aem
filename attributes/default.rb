@@ -19,6 +19,8 @@
 
 include_attribute "apache2"
 
+default[:aem][:s3] = false
+default[:aem][:jar_source] = nil
 default[:aem][:version] = nil
 default[:aem][:jvm_opts] = {}
 default[:aem][:jar_opts] = []
@@ -32,6 +34,7 @@ default[:aem][:cluster_name] = nil
 default[:aem][:geometrixx_priv_users] = [
   'author', 'jdoe@geometrixx.info', 'aparker@geometrixx.info'
 ]
+
 default[:aem][:aem_options] = {
   "JAVA_HOME" => "/usr/java/default",
   "RUNAS_USER" => "crx",
@@ -39,13 +42,15 @@ default[:aem][:aem_options] = {
   "CQ_HEAP_MAX" => "384",
   "CQ_PERMGEN" => "128"
 }
+
 default[:aem][:commands] = {
   :replicators => {
     :publish => { :add => 'curl -u <%=local_user%>:<%=local_password%> -X POST http://localhost:<%=local_port%>/etc/replication/agents.<%=server%>/<%=aem_instance%><%=instance%>/_jcr_content -d jcr:title="<%=type%> Agent <%=instance%>" -d transportUri=http://<%=h[:ipaddress]%>:<%=h[:port]%>/bin/receive?sling:authRequestLogin=1 -d enabled=true -d transportUser=<%=h[:user]%> -d transportPassword=<%=h[:password]%> -d cq:template="/libs/cq/replication/templates/agent" -d retryDelay=60000 -d logLevel=info -d serializationType=durbo -d jcr:description="<%=type%> Agent <%=instance%>" -d sling:resourceType="cq/replication/components/agent"'},
     :flush => {:add => 'curl -u <%=local_user%>:<%=local_password%> -X POST http://localhost:<%=local_port%>/etc/replication/agents.<%=server%>/flush<%=instance%>/_jcr_content  -d transportUri=http://<%=h[:ipaddress]%>/dispatcher/invalidate.cache -d enabled=true -d transportUser=<%=h[:user]%> -d transportPassword=<%=h[:password]%> -d jcr:title=flush<%=instance%> -d jcr:description=flush<%=instance%> -d serializationType=flush -d cq:template=/libs/cq/replication/templates/agent -d sling:resourceType="cq/replication/components/agent" -d retryDelay=60000 -d logLevel=info -d triggerSpecific=true -d triggerReceive=true'},
     :flush_agent => {:add => 'curl -F "jcr:primaryType=cq:Page" -F "jcr:content=" -u <%=local_user%>:<%=local_password%> http://localhost:<%=local_port%>/etc/replication/agents.<%=server%>/<%=agent%><%=instance%>'},
     :agent => {:add => 'curl -F "jcr:primaryType=cq:Page" -F "jcr:content=" -u <%=local_user%>:<%=local_password%> http://localhost:<%=local_port%>/etc/replication/agents.<%=server%>/<%=agent%><%=instance%>',
-               :remove => 'curl -u <%=local_user%>:<%=local_password%> -X DELETE http://localhost:<%=local_port%>/etc/replication/agents.<%=server%>/<%=h%>',
+               #:remove => 'curl -u <%=local_user%>:<%=local_password%> -X DELETE http://localhost:<%=local_port%>/etc/replication/agents.<%=server%>/<%=h%>',
+               :remove => 'curl -u <%=local_user%>:<%=local_password%> -X DELETE http://localhost:<%=local_port%>/etc/replication/agents.<%=server%>/<%=agent%><%=instance%>',
                :list => 'curl -u <%=local_user%>:<%=local_password%> http://localhost:<%=local_port%>/etc/replication.infinity.json'}
   },
   :password => {
@@ -57,7 +62,7 @@ default[:aem][:commands] = {
     :aem55 => 'curl -u <%= admin_user %>:<%= admin_password %> -FdeleteAuthorizable= http://localhost:<%= port %><%= path %>/<%= user %>'
   },
   :add_user => {
-    :aem55 => 'curl -u <%= admin_user %>:<%= admin_password %> -FcreateUser= -FauthorizableId=<%= user %> -Frep:password=<%= password %> -Fmembership=<%= group %> http://localhost:<%= port %>/libs/granite/security/post/authorizables'
+    :aem55 => 'curl -u <%= admin_user %>:<%= admin_password %> -FcreateUser= -FauthorizableId=<%= user %> -Frep:password=<%= password %> -Fmembership=<%= group %> -Fmembership=everyone http://localhost:<%= port %>/libs/granite/security/post/authorizables'
   }
 }
 default[:aem][:author] = {
@@ -164,13 +169,17 @@ default[:aem][:dispatcher][:renders] = [ { :name => "publish_rend", :hostname =>
 default[:aem][:dispatcher][:filter_rules] = {
     "0001" => '/type "deny"  /glob "*"',
     "0002" => '/type "deny"  /glob "GET *.*[0-9].json*"',
-    "0041" => '/type "allow" /glob "* *.css *"',
-    "0042" => '/type "allow" /glob "* *.gif *"',
-    "0043" => '/type "allow" /glob "* *.ico *"',
-    "0044" => '/type "allow" /glob "* *.js *"',
-    "0045" => '/type "allow" /glob "* *.png *"',
-    "0046" => '/type "allow" /glob "* *.swf *"',
-    "0047" => '/type "allow" /glob "* *.jpg *"',
+    "0023" => '/type "allow" /url "/content*"',  
+    "0030" => '/type "allow" /url "/images*"',
+    "0031" => '/type "allow" /url "/fonts*"',
+    "0041" => '/type "allow" /url "*.css"',
+    "0042" => '/type "allow" /url "*.gif"',
+    "0043" => '/type "allow" /url "*.ico"',
+    "0044" => '/type "allow" /url "*.js"',
+    "0045" => '/type "allow" /url "*.png"',
+    "0046" => '/type "allow" /url "*.swf"',
+    "0047" => '/type "allow" /url "*.jpg"',
+    "0048" => '/type "allow" /url "*.jpeg"',
     "0061" => '/type "allow" /glob "POST /content/[.]*.form.html"',
     "0062" => '/type "allow" /glob "* /libs/cq/personalization/*"',
     "0081" => '/type "deny"  /glob "GET *.infinity.json*"',

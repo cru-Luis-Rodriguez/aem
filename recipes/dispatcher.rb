@@ -26,15 +26,16 @@ include_recipe "apache2::mod_ssl"
 include_recipe "apache2::mod_expires"
 
 #source url can be file:///tmp/somefile
-
-aws_s3_file "/tmp/mod_dispatcher.so" do
-      bucket "cru-aem6"
-      remote_path "/installation_files/dispatcher-apache2.4-4.1.7.so"
-      aws_access_key_id aws['aws_access_key_id']
-      aws_secret_access_key aws['aws_secret_access_key']
-      mode "0644"
-      not_if { ::File.exist?("/tmp/mod_dispatcher.so") }
-    end
+if node['aem']['s3']
+  aws_s3_file "/tmp/mod_dispatcher.so" do
+        bucket "cru-aem6"
+        remote_path "/installation_files/dispatcher-apache2.4-4.1.7.so"
+        aws_access_key_id aws['aws_access_key_id']
+        aws_secret_access_key aws['aws_secret_access_key']
+        mode "0644"
+        not_if { ::File.exist?("/tmp/mod_dispatcher.so") }
+  end
+end
 
 aem_dispatcher 'mod_dispatcher.so' do
   package_install          node[:aem][:use_yum]
@@ -45,6 +46,13 @@ aem_dispatcher 'mod_dispatcher.so' do
   webserver_type           node[:aem][:dispatcher][:webserver_type]
   apache_libexecdir        node[:apache][:libexecdir]
   action :install
+end
+
+directory "#{node[:apache][:dir]}/conf" do
+  owner "root"
+  group node[:apache][:root_group]
+  mode "0775"
+  action :create
 end
 
 #if we want to support non-apache, we'll need to do some more work here

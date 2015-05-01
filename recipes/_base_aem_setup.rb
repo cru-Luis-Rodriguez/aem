@@ -53,6 +53,7 @@ end
 case node[:platform]
   when "redhat", "centos"
     chef_gem "curb" do
+      compile_time true if Chef::Resource::ChefGem.instance_methods(false).include?(:compile_time)
       action :nothing
     end.run_action(:install)
   when "ubuntu", "debian"
@@ -63,7 +64,6 @@ case node[:platform]
     end  
 end
 
-#require 'curb'
 
 unless node['aem']['license_url']
   Chef::Application.fatal! 'aem.license_url attribute cannot be nil. Please populate that attribute.'

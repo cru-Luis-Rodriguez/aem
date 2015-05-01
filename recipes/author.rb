@@ -16,33 +16,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#include_recipe "curl::default"
-#include_recipe "curl::libcurl"
+include_recipe "curl::default"
+include_recipe "curl::libcurl"
 include_recipe "aws"
 aws = data_bag_item("aws", "main")
-include_recipe "aem::_base_aem_setup"
+#include_recipe "aem::_base_aem_setup"
 
-#source url can be file:///tmp/somefile
-
-aws_s3_file "/tmp/cq60-author-p4502.jar" do
+#Get AEM from source
+if node['aem']['s3'] 
+  aws_s3_file "/tmp/#{node['aem']['jar_source']}.jar" do
       bucket "cru-aem6"
-      remote_path "/installation_files/cq60-author-p4502.jar"
+      remote_path ("/installation_files/#{node[:aem][:jar_source]}.jar")
       aws_access_key_id aws['aws_access_key_id']
       aws_secret_access_key aws['aws_secret_access_key']
       mode "0644"
-      not_if { ::File.exist?("/tmp/cq60-author-p4502.jar") }
-    end
-
-unless node[:aem][:use_yum]
+      not_if { ::File.exist?("/tmp/#{node[:aem][:jar_source]}.jar") }
+  end
   aem_jar_installer "author" do
-    download_url node[:aem][:download_url]
-    default_context node[:aem][:author][:default_context]
-    port node[:aem][:author][:port]
-    action :install
+     download_url node[:aem][:download_url]
+     default_context node[:aem][:author][:default_context]
+     port node[:aem][:author][:port]
+     action :install
+  end
+else
+  unless node[:aem][:use_yum]
+    aem_jar_installer "author" do
+      download_url node[:aem][:download_url]
+      default_context node[:aem][:author][:default_context]
+      port node[:aem][:author][:port]
+      action :install
+    end
   end
 end
 
-if node['aem']['license_url'] == "S3"
+#Get license file form source
+if node['aem']['s3']
     aws_s3_file "#{node[:aem][:author][:default_context]}/license.properties" do
       bucket "cru-aem6"
       remote_path "/installation_files/license.properties"
@@ -54,12 +62,14 @@ if node['aem']['license_url'] == "S3"
     unless node[:aem][:license_url].nil?
       remote_file "#{node[:aem][:author][:default_context]}/license.properties" do
         source "#{node[:aem][:license_url]}"
+        owner user
+        group user
         mode "0644"
       end
     end
 end
 
-
+#Determine AEM Version jar format
 if node[:aem][:version].to_f > 5.4 then
   node.set[:aem][:author][:runnable_jar] = "aem-author-p#{node[:aem][:author][:port]}.jar"
 end
@@ -101,16 +111,23 @@ else
 end
 
 #Change admin password
-unless node[:aem][:author][:new_admin_password].nil?
-  aem_user node[:aem][:author][:admin_user] do
-    password node[:aem][:author][:new_admin_password]
-    admin_user node[:aem][:author][:admin_user]
-    admin_password node[:aem][:author][:admin_password]
-    port node[:aem][:author][:port]
-    aem_version node[:aem][:version]
-    action :set_password
+aem_user node[:aem][:author][:admin_user] do
+  password node[:aem][:author][:new_admin_password]
+  admin_user node[:aem][:author][:admin_user]
+  admin_password node[:aem][:author][:admin_password]
+  port node[:aem][:author][:port]
+  aem_version node[:aem][:version]
+  action :set_password
+  only_if { node[:aem][:author][:new_admin_password] }
+  not_if { node.set[:aem][:author][:new_admin_password] == node.set[:aem][:author][:admin_password] }
+  notifies :run, 'ruby_block[Store new admin password in node]', :immediately
+end
+
+ruby_block 'Store new admin password in node' do
+  block do
+    node.set[:aem][:author][:admin_password] = node[:aem][:author][:new_admin_password]
   end
-  node.set[:aem][:author][:admin_password] = node[:aem][:author][:new_admin_password]
+  action :nothing
 end
 
 #delete the privileged users from geometrixx, if they're still there.

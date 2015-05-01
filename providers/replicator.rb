@@ -25,7 +25,6 @@ action :add do
   local_user = new_resource.local_user
   local_password = new_resource.local_password
   local_port = new_resource.local_port
-  hosts = new_resource.remote_hosts
   role = new_resource.cluster_role
   cluster_name = new_resource.cluster_name
   type = new_resource.type
@@ -54,22 +53,16 @@ action :add do
   if new_resource.dynamic_cluster
     log "Finding replication hosts dynamically..."
     hosts = []
-    #fix issue FC003
-    if Chef::Config[:solo]
-       Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
-    else
-      search(:node, %Q(role:"#{role}" AND aem_cluster_name:"#{cluster_name}")) do |n|
-        log "Found host: #{n[:fqdn]}"
-        hosts << {
-          :ipaddress => n[:ipaddress],
-          :port => n[:aem][aem_instance][:port],
-          :user => n[:aem][aem_instance][:admin_user],
-          :password => n[:aem][aem_instance][:admin_password],
-          :name => n[:fqdn]
-        }
-      end
+    search(:node, %Q(layer:"#{role}" AND aem_cluster_name:"#{cluster_name}")) do |n|
+      log "Found host: #{n[:private_dns_name]}"
+      hosts << {
+        :ipaddress => n[:private_ip],
+        :port => n[:aem][aem_instance][:port],
+        :user => n[:aem][aem_instance][:admin_user],
+        :password => n[:aem][aem_instance][:admin_password],
+        :name => n[:private_dns_name]
+      }
     end
-    #end FC003
     hosts.sort! { |a,b| a[:name] <=> b[:name] }
   end
 
@@ -91,7 +84,6 @@ action :remove do
   local_user = new_resource.local_user
   local_password = new_resource.local_password
   local_port = new_resource.local_port
-  hosts = new_resource.remote_hosts
   role = new_resource.cluster_role
   cluster_name = new_resource.cluster_name
   type = new_resource.type
@@ -120,14 +112,14 @@ action :remove do
   if new_resource.dynamic_cluster
     log "Finding replication hosts dynamically..."
     hosts = []
-    search(:node, %Q(role:"#{role}" AND aem_cluster_name:"#{cluster_name}")) do |n|
-      log "Found host: #{n[:fqdn]}"
+     search(:node, %Q(layer:"#{role}" AND aem_cluster_name:"#{cluster_name}")) do |n|
+      log "Found host: #{n[:private_dns_name]}"
       hosts << {
-        :ipaddress => n[:ipaddress],
+        :ipaddress => n[:private_ip],
         :port => n[:aem][aem_instance][:port],
         :user => n[:aem][aem_instance][:admin_user],
         :password => n[:aem][aem_instance][:admin_password],
-        :name => n[:fqdn]
+        :name => n[:private_dns_name]
       }
     end
     hosts.sort! { |a,b| a[:name] <=> b[:name] }
@@ -171,4 +163,3 @@ action :remove do
     counter += 1
   end
 end
-
