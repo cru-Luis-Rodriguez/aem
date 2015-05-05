@@ -45,3 +45,4 @@ test/roles/
 recipes/add_dispatcher_agent_bak.rb
 recipes/remove_dispatcher_agent_bak.rb
 recipes/remove_publish_agent_bak.rb
+VERSION
