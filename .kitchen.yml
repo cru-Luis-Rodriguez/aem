@@ -10,7 +10,7 @@ driver:
           host: 4502
           auto_correct: true
 provisioner:
-  name: chef_solo
+  name: chef_zero
   environments_path: './test/environments'
   roles_path: './test/roles'
   data_bags_path: './test/integration/data_bags'
