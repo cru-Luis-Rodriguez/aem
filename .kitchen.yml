@@ -26,6 +26,7 @@ suites:
     run_list:
       - recipe[apt::default]
       - recipe[java::default]
+      - recipe[aem::_base_aem_setup]
       - recipe[aem::author]
       - role[aem]
     attributes:
