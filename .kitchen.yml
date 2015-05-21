@@ -2,7 +2,7 @@
 driver:
   name: vagrant
   customize:
-    memory: 4096
+    memory: 2048
   network:
     # Allow access to the aem webui which is useful when troubleshooting
       - - forwarded_port
