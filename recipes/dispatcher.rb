@@ -27,13 +27,13 @@ include_recipe "apache2::mod_expires"
 
 #source url can be file:///tmp/somefile
 if node['aem']['s3']
-  aws_s3_file "/tmp/mod_dispatcher.so" do
+  aws_s3_file "/tmp/#{node[:aem][:disp_mod_source]}.so" do
         bucket "cru-aem6"
         remote_path "/installation_files/#{node[:aem][:disp_mod_source]}.so"
         aws_access_key_id aws['aws_access_key_id']
         aws_secret_access_key aws['aws_secret_access_key']
         mode "0644"
-        not_if { ::File.exist?("/tmp/mod_dispatcher.so") }
+        not_if { ::File.exist?("/tmp/#{node[:aem][:disp_mod_source]}.so") }
   end
 end
 
