@@ -26,18 +26,63 @@
         }
     <% end %>
     }
+    # The filter section defines the requests that should be handled by the dispatcher.
+    #
+    # Entries can be either specified using globs, or elements of the request line:
+    #
+    # (1) globs will be compared against the entire request line, e.g.:
+    #
+    #     /0001 { /type "deny" /glob "* /index.html *" }
+    #
+    #   matches request "GET /index.html HTTP/1.1" but not "GET /index.html?a=b HTTP/1.1".
+    #
+    # (2) method/url/query/protocol will be compared againts the respective elements of
+    #   the request line, e.g.:
+    #
+    #     /0001 { /type "deny" /method "GET" /url "/index.html" }
+    #
+    #   matches both "GET /index.html" and "GET /index.html?a=b HTTP/1.1".
+    #
+    # Note: specifying elements of the request line is the preferred method.
   /filter
     {
     <% @filter_rules.keys.sort.each do |rule_number| %>
       /<%= rule_number %> { <%= @filter_rules[rule_number] %> }
     <% end %>
     }
+    # The cache section regulates what responses will be cached and where.
   /cache
     {
+    # The docroot must be equal to the document root of the webserver. The
+    # dispatcher will store files relative to this directory and subsequent
+    # requests may be "declined" by the dispatcher, allowing the webserver
+    # to deliver them just like static files.
     /docroot "<%= @cache_root %>"
     <% @cache_opts.each do |opt| %>
    <%= opt %>
     <% end %>
+    # Sets the level upto which files named ".stat" will be created in the
+    # document root of the webserver. When an activation request for some
+    # page is received, only files within the same subtree are affected
+    # by the invalidation.
+    /statfileslevel "3"
+
+    # Flag indicating whether to cache responses to requests that contain
+    # authorization information.
+    /allowAuthorized "1"
+
+    # Flag indicating whether the dispatcher should serve stale content if
+    # no remote server is available.
+    /serveStaleOnError "1"
+
+    # The rules section defines what responses should be cached based on
+    # the requested URL. Please note that only the following requests can
+    # lead to cacheable responses:
+    #
+    # - HTTP method is GET
+    # - URL has an extension
+    # - Request has no query string
+    # - Request has no "Authorization" header (unless allowAuthorized is 1)
     /rules
       {
       <% @cache_rules.keys.sort.each do |rule_number| %>
@@ -69,6 +114,20 @@
       <% end %>
       }
     }
+  # The ignoreUrlParams section contains query string parameter names that
+  # should be ignored when determining whether some request's output can be
+  # cached or delivered from cache.
+  #
+  # In this example configuration, the "q" parameter will be ignored. 
+  /ignoreUrlParams
+    {
+    /0001 { /glob "*" /type "deny" }
+   #/0002 { /glob "q" /type "allow" }
+    /0003 { /glob "ticket=" /type "deny" }
+     }
+  }
+  # The statistics sections dictates how the load should be balanced among the
+  # renders according to the media-type.
   /statistics
     {
       /categories
