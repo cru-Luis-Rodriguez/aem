@@ -181,6 +181,7 @@ default[:aem][:dispatcher][:filter_rules] = {
     "0046" => '/type "allow" /url "*.swf"',
     "0047" => '/type "allow" /url "*.jpg"',
     "0048" => '/type "allow" /url "*.jpeg"',
+    "0049" => '/type "allow" /url "*.txt"',
     "0061" => '/type "allow" /glob "POST /content/[.]*.form.html"',
     "0062" => '/type "allow" /glob "* /libs/cq/personalization/*"',
     "0081" => '/type "deny"  /glob "GET *.infinity.json*"',
